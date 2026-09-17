@@ -1,0 +1,66 @@
+{
+  "type": "page",
+  "title": "Main Page",
+  "items": [
+    {
+      "type": "section",
+      "title": "Introduction",
+      "items": [
+        {
+          "type": "text",
+          "content": "Welcome to the main page!"
+        },
+        {
+          "type": "image",
+          "src": "https://aruana-lumiform.github.io/mobile-code-challenge-tools/code-challenge/welcome.jpg",
+          "title": "Welcome Image"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Chapter 1",
+      "items": [
+        {
+          "type": "text",
+          "content": "This is the first chapter."
+        },
+        {
+          "type": "section",
+          "title": "Subsection 1.1",
+          "items": [
+            {
+              "type": "text",
+              "content": "This is a subsection under Chapter 1."
+            },
+            {
+              "type": "image",
+              "src": "https://aruana-lumiform.github.io/mobile-code-challenge-tools/code-challenge/chapter1.jpg",
+              "title": "Chapter 1 Image"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "title": "Second Page",
+      "items": [
+        {
+          "type": "section",
+          "title": "Chapter 2",
+          "items": [
+            {
+              "type": "text",
+              "content": "This is the second chapter."
+            },
+            {
+              "type": "question",
+              "content": "What is the main topic of Chapter 2?"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
