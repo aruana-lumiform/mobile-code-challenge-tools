@@ -16,17 +16,19 @@ no CORS setup, and no rate limit.
 
 The candidate-facing brief is in [CHALLENGE.md](CHALLENGE.md).
 
-## Setup
+## One-time setup
 
-The **Deploy challenge site** workflow enables Pages itself on its first run
-(`configure-pages` with `enablement: true`), so there is nothing to switch on by
-hand. Publishing is therefore just:
+Pages has to be switched on once, by hand, before any of the URLs above resolve.
+There is no way around this step: the workflow's `GITHUB_TOKEN` is not allowed to
+create a Pages site, so `configure-pages` fails with *Get Pages site failed* until
+a repository admin has done it.
 
-1. Push to the repository's default branch, or run the workflow manually from the
-   Actions tab. It validates `challenge.json` and then publishes `public/`.
-2. Wait for the first deployment; Pages can take a couple of minutes to answer on a
-   brand-new site.
-3. Confirm the endpoint is live and typed correctly:
+1. **Settings → Pages → Build and deployment → Source: _GitHub Actions_.**
+2. Re-run the **Deploy challenge site** workflow from the Actions tab, or push to the
+   default branch. It validates `challenge.json` and then publishes `public/`.
+3. Wait for the deployment to finish; Pages can take a couple of minutes to answer on
+   a brand-new site.
+4. Confirm the endpoint is live and typed correctly:
 
    ```bash
    curl -i https://aruana-lumiform.github.io/mobile-code-challenge-tools/code-challenge/challenge.json
@@ -39,10 +41,6 @@ refuses deployments from anywhere else. It reads that branch from the repository
 itself rather than hard-coding a name, so renaming the default branch (for example to
 `main`) does not break it. Pull requests run the validation job alone.
 
-If the automatic enablement is ever refused — it needs the workflow's `pages: write`
-permission, and Pages on a private repository needs a paid plan — switch it on by hand
-under **Settings → Pages → Build and deployment → Source: _GitHub Actions_** and
-re-run the workflow.
 
 ## Changing the content
 
