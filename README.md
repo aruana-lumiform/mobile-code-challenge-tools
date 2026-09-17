@@ -16,15 +16,17 @@ no CORS setup, and no rate limit.
 
 The candidate-facing brief is in [CHALLENGE.md](CHALLENGE.md).
 
-## One-time setup
+## Setup
 
-Pages has to be switched on once, by hand, before any of the URLs above resolve:
+The **Deploy challenge site** workflow enables Pages itself on its first run
+(`configure-pages` with `enablement: true`), so there is nothing to switch on by
+hand. Publishing is therefore just:
 
-1. **Settings → Pages → Build and deployment → Source: _GitHub Actions_.**
-2. Merge this branch into the repository's default branch.
-3. Watch the **Deploy challenge site** workflow under the Actions tab. It validates
-   `challenge.json` and then publishes `public/`.
-4. Confirm the endpoint is live and typed correctly:
+1. Push to the repository's default branch, or run the workflow manually from the
+   Actions tab. It validates `challenge.json` and then publishes `public/`.
+2. Wait for the first deployment; Pages can take a couple of minutes to answer on a
+   brand-new site.
+3. Confirm the endpoint is live and typed correctly:
 
    ```bash
    curl -i https://aruana-lumiform.github.io/mobile-code-challenge-tools/code-challenge/challenge.json
@@ -33,7 +35,14 @@ Pages has to be switched on once, by hand, before any of the URLs above resolve:
    Expect `HTTP/2 200` and `content-type: application/json; charset=utf-8`.
 
 The deploy job only runs on the repository's default branch, because GitHub Pages
-refuses deployments from anywhere else. Pull requests run the validation job alone.
+refuses deployments from anywhere else. It reads that branch from the repository
+itself rather than hard-coding a name, so renaming the default branch (for example to
+`main`) does not break it. Pull requests run the validation job alone.
+
+If the automatic enablement is ever refused — it needs the workflow's `pages: write`
+permission, and Pages on a private repository needs a paid plan — switch it on by hand
+under **Settings → Pages → Build and deployment → Source: _GitHub Actions_** and
+re-run the workflow.
 
 ## Changing the content
 
