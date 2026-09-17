@@ -111,19 +111,54 @@ scripts/
   deploy-pages.yml               # validate, then publish public/
 ```
 
-## If you would rather serve the JSON from a Gist
+## Serving the JSON from a Gist instead
 
-A Gist works for the JSON, but not for the images — Gists are for text files, so
-`welcome.jpg` and `chapter1.jpg` still need to live here. If you want the Gist anyway,
-paste the contents of `public/code-challenge/challenge.json` into a public Gist named
-`challenge.json` and hand out:
+A Gist can hold the JSON, but not the images: Gists take text files, so `welcome.jpg`
+and `chapter1.jpg` still need a host. They do not need Pages, though — this repository
+is public, so `raw.githubusercontent.com` already serves them as `image/jpeg`.
+
+1. Repoint the image URLs at the raw host and write a Gist-ready copy:
+
+   ```bash
+   python3 scripts/make_gist_json.py --image-base \
+       https://raw.githubusercontent.com/aruana-lumiform/mobile-code-challenge-tools/main/public/code-challenge/
+   ```
+
+   That writes `dist/challenge.gist.json` (git-ignored). Use the branch the files
+   actually live on: a raw URL naming a branch dies when that branch is deleted.
+
+2. Create a **public** Gist at <https://gist.github.com>, name the file
+   `challenge.json`, and paste that copy in.
+
+3. Hand candidates the revision-less raw URL, which always follows the latest revision:
+
+   ```
+   https://gist.githubusercontent.com/<user>/<gist-id>/raw/challenge.json
+   ```
+
+   The Retrofit base URL then becomes `https://gist.githubusercontent.com/<user>/<gist-id>/raw/`
+   with `@GET("challenge.json")`.
+
+Three trade-offs against the Pages route:
+
+- **Content type.** GitHub's raw hosts answer with `text/plain; charset=utf-8`, not
+  `application/json` — confirmed by requesting this repo's own `challenge.json` from
+  `raw.githubusercontent.com`. Retrofit does not care, since it picks a converter by
+  return type, but the endpoint misrepresents itself to anything that does.
+- **Drift.** The Gist is a copy. Editing `public/code-challenge/challenge.json` here
+  does not touch it, and `scripts/validate.py` cannot check a Gist it does not own.
+  Re-run the generator and re-paste after every change.
+- **Caching.** Raw hosts send `Cache-Control: max-age=300`, so an edit takes up to five
+  minutes to reach clients.
+
+### Or skip the Gist entirely
+
+Since the images are already served from the raw host, the JSON can be too — no Gist
+and no Pages, working as soon as the file is pushed:
 
 ```
-https://gist.githubusercontent.com/<user>/<gist-id>/raw/challenge.json
+https://raw.githubusercontent.com/aruana-lumiform/mobile-code-challenge-tools/main/public/code-challenge/challenge.json
 ```
 
-Leaving the revision hash out of that URL keeps it pointing at the latest revision.
-Two trade-offs to know about: raw Gist responses are served as `text/plain` rather than
-`application/json` (harmless for Retrofit, as noted above, but it misrepresents the
-endpoint), and the content is then split across two places that can drift apart —
-the validator here cannot check a Gist it does not own.
+This keeps a single source of truth in the repository, which the Gist route gives up.
+It carries the same `text/plain` and five-minute caching caveats as the Gist.
